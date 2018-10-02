@@ -139,11 +139,14 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
   }
 
   @Override
-  public void onDateSelected(Day item) {
+  public void onDateSelected(Day item, boolean userAction) {
     tvMonth.setText(item.getMonth(mMonthPattern));
-    if (showTodayButton)
+    if (showTodayButton) {
       tvToday.setVisibility(item.isToday() ? INVISIBLE : VISIBLE);
-    dateChangedSubject.onNext(item.getDate());
+    }
+    if (userAction) {
+      dateChangedSubject.onNext(item.getDate());
+    }
   }
 
   public Observable<LocalDate> getDateChangedObservable() {
