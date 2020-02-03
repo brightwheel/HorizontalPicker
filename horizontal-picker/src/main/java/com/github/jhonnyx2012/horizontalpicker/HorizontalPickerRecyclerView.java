@@ -80,7 +80,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
           listener.onStopDraggingPicker();
           int position = (int) ((computeHorizontalScrollOffset() / itemWidth) + 3.5);
           if (position != -1 && position != adapter.getSelectedPosition()) {
-            selectItem(position);
+            selectItem(position, true);
           }
           break;
         case SCROLL_STATE_DRAGGING:
@@ -95,7 +95,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
     }
   };
 
-  private void selectItem(int position) {
+  private void selectItem(int position, boolean userAction) {
     if (position == NO_POSITION) {
       return;
     }
@@ -104,7 +104,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
       adapter.setSelectedPosition(position);
       adapter.notifyItemChanged(unselectPosition);
       adapter.notifyItemChanged(position);
-      listener.onDateSelected(adapter.getItem(position));
+      listener.onDateSelected(adapter.getItem(position), userAction);
     }
   }
 
@@ -116,7 +116,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   public void onClickView(View v, int adapterPosition) {
     if (adapterPosition != adapter.getSelectedPosition()
         && adapter.getItemViewType(adapterPosition) != R.layout.item_placeholder) {
-      selectItem(adapterPosition);
+      selectItem(adapterPosition, true);
       if (scrollToSelectedPosition) {
         smoothScrollToPosition(adapterPosition);
       }
@@ -143,7 +143,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   public void setDate(LocalDate date) {
     Day firstDay = adapter.getItem(DUMMY_VIEW_OFFSET);
     final int offset = (int) ChronoUnit.DAYS.between(firstDay.getDate(), date);
-    selectItem(offset + DUMMY_VIEW_OFFSET);
+    selectItem(offset + DUMMY_VIEW_OFFSET, false);
     ((LinearLayoutManager) getLayoutManager()).scrollToPositionWithOffset(offset, 0);
   }
 
