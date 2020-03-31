@@ -35,9 +35,8 @@ public class HorizontalPickerAdapter extends RecyclerView.Adapter<HorizontalPick
   private int selectedPosition = RecyclerView.NO_POSITION;
   private final int dummyDaysOffset;
 
-  public HorizontalPickerAdapter(int itemWidth, OnItemClickedListener listener, Context context, int daysToCreate, int offset, int mBackgroundColor, int mDateSelectedColor, int mDateSelectedTextColor, int mTodayDateTextColor, int mTodayDateBackgroundColor, int mDayOfWeekTextColor, int mUnselectedDayTextColor, int dummyDaysOffset) {
+  public HorizontalPickerAdapter(OnItemClickedListener listener, Context context, int daysToCreate, int offset, int mBackgroundColor, int mDateSelectedColor, int mDateSelectedTextColor, int mTodayDateTextColor, int mTodayDateBackgroundColor, int mDayOfWeekTextColor, int mUnselectedDayTextColor, int dummyDaysOffset) {
     items = new ArrayList<>();
-    this.itemWidth = itemWidth;
     this.listener = listener;
     generateDays(daysToCreate, LocalDate.now().minusDays(offset));
     this.mBackgroundColor = mBackgroundColor;
@@ -63,6 +62,10 @@ public class HorizontalPickerAdapter extends RecyclerView.Adapter<HorizontalPick
     }
   }
 
+  public void setItemWidth(int itemWidth) {
+    this.itemWidth = itemWidth;
+    notifyDataSetChanged();
+  }
 
   @Override
   public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -138,13 +141,15 @@ public class HorizontalPickerAdapter extends RecyclerView.Adapter<HorizontalPick
     public DayViewHolder(View itemView) {
       super(itemView);
       tvDay = (TextView) itemView.findViewById(R.id.tvDay);
-      tvDay.setWidth(itemWidth);
       tvWeekDay = (TextView) itemView.findViewById(R.id.tvWeekDay);
       itemView.setOnClickListener(this);
     }
 
     @Override
     void bind(Day item) {
+      if (itemWidth != 0) {
+        tvDay.setWidth(itemWidth);
+      }
       tvDay.setText(item.getDay());
       tvWeekDay.setText(item.getWeekDay());
       tvWeekDay.setTextColor(mDayOfWeekTextColor);
@@ -170,12 +175,13 @@ public class HorizontalPickerAdapter extends RecyclerView.Adapter<HorizontalPick
 
     public PlaceholderViewHolder(View itemView) {
       super(itemView);
-      itemView.setMinimumWidth(itemWidth);
     }
 
     @Override
     void bind(Day day) {
-
+      if (itemWidth != 0) {
+        itemView.setMinimumWidth(itemWidth);
+      }
     }
   }
 }

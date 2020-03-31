@@ -64,12 +64,7 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
   }
 
   public void setDate(final LocalDate date) {
-    rvDays.post(new Runnable() {
-      @Override
-      public void run() {
-        rvDays.setDate(date);
-      }
-    });
+    rvDays.setDate(date);
   }
 
   public void init() {
@@ -119,11 +114,6 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
     if (background instanceof ColorDrawable)
       color = ((ColorDrawable) background).getColor();
     return color;
-  }
-
-  @Override
-  public boolean post(Runnable action) {
-    return rvDays.post(action);
   }
 
   @Override
