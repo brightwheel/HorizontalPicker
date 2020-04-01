@@ -169,6 +169,14 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
     ((LinearLayoutManager) getLayoutManager()).scrollToPositionWithOffset(offset, 0);
   }
 
+  public @Nullable LocalDate getSelectedDate() {
+    if (adapter.getSelectedPosition() != -1) {
+      return adapter.getItem(adapter.getSelectedPosition()).getDate();
+    } else {
+      return null;
+    }
+  }
+
   private static class CenterSmoothScroller extends LinearSmoothScroller {
 
     CenterSmoothScroller(Context context) {
