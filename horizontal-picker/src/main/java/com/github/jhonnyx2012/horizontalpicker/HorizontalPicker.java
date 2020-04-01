@@ -143,6 +143,10 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
     return dateChangedSubject;
   }
 
+  public @Nullable LocalDate getSelectedDate() {
+    return rvDays.getSelectedDate();
+  }
+
   public HorizontalPicker setDays(int days) {
     this.days = days;
     return this;

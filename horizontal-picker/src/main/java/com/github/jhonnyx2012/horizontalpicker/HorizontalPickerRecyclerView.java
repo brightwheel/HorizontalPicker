@@ -27,6 +27,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   private int itemWidth;
   private HorizontalPickerListener listener;
   private boolean scrollToSelectedPosition;
+  private LinearSnapHelper snapHelper = new LinearSnapHelper();
 
   public HorizontalPickerRecyclerView(Context context) {
     super(context);
@@ -67,7 +68,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
         mUnselectedDayTextColor,
         DUMMY_VIEW_OFFSET);
     setAdapter(adapter);
-    LinearSnapHelper snapHelper = new LinearSnapHelper();
+
     snapHelper.attachToRecyclerView(HorizontalPickerRecyclerView.this);
     removeOnScrollListener(onScrollListener);
     ViewTreeObserver vto = getViewTreeObserver();
@@ -91,8 +92,17 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
       switch (newState) {
         case RecyclerView.SCROLL_STATE_IDLE:
           listener.onStopDraggingPicker();
-          int position = (int) Math.ceil((double) computeHorizontalScrollOffset() / itemWidth + DUMMY_VIEW_OFFSET);
+          final View snapView = snapHelper.findSnapView(layoutManager);
+          if (snapView == null) {
+            return;
+          }
+          final ViewHolder viewHolder = recyclerView.findContainingViewHolder(snapView);
+          if (viewHolder == null) {
+            return;
+          }
+          int position = viewHolder.getAdapterPosition();
           if (position != -1 && position != adapter.getSelectedPosition()) {
+            adapter.getSelectedPosition();
             selectItem(position, true);
           }
           break;
@@ -153,6 +163,14 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
     final int offset = (int) ChronoUnit.DAYS.between(firstDay.getDate(), date);
     selectItem(offset + DUMMY_VIEW_OFFSET, false);
     ((LinearLayoutManager) getLayoutManager()).scrollToPositionWithOffset(offset, 0);
+  }
+
+  public @Nullable LocalDate getSelectedDate() {
+    if (adapter.getSelectedPosition() != -1) {
+      return adapter.getItem(adapter.getSelectedPosition()).getDate();
+    } else {
+      return null;
+    }
   }
 
   private static class CenterSmoothScroller extends LinearSmoothScroller {
