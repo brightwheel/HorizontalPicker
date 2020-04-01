@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -27,6 +28,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   private int itemWidth;
   private HorizontalPickerListener listener;
   private boolean scrollToSelectedPosition;
+  private LinearSnapHelper snapHelper = new LinearSnapHelper();
 
   public HorizontalPickerRecyclerView(Context context) {
     super(context);
@@ -67,7 +69,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
         mUnselectedDayTextColor,
         DUMMY_VIEW_OFFSET);
     setAdapter(adapter);
-    LinearSnapHelper snapHelper = new LinearSnapHelper();
+
     snapHelper.attachToRecyclerView(HorizontalPickerRecyclerView.this);
     removeOnScrollListener(onScrollListener);
     ViewTreeObserver vto = getViewTreeObserver();
@@ -91,8 +93,18 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
       switch (newState) {
         case RecyclerView.SCROLL_STATE_IDLE:
           listener.onStopDraggingPicker();
-          int position = (int) Math.ceil((double) computeHorizontalScrollOffset() / itemWidth + DUMMY_VIEW_OFFSET);
+          final View snapView = snapHelper.findSnapView(layoutManager);
+          if (snapView == null) {
+            return;
+          }
+          final ViewHolder viewHolder = recyclerView.findContainingViewHolder(snapView);
+          if (viewHolder == null) {
+            return;
+          }
+          int position = viewHolder.getAdapterPosition();
           if (position != -1 && position != adapter.getSelectedPosition()) {
+            adapter.getSelectedPosition();
+            Log.d("selection", "Scroll Idle select " + position);
             selectItem(position, true);
           }
           break;
@@ -129,6 +141,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   public void onClickView(View v, int adapterPosition) {
     if (adapterPosition != adapter.getSelectedPosition()
         && adapter.getItemViewType(adapterPosition) != R.layout.item_placeholder) {
+      Log.d("selection", "onClickView " + adapterPosition);
       selectItem(adapterPosition, true);
       if (scrollToSelectedPosition) {
         smoothScrollToPosition(adapterPosition);
@@ -149,6 +162,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
   }
 
   public void setDate(LocalDate date) {
+    Log.d("selection", "set date " + date);
     Day firstDay = adapter.getItem(DUMMY_VIEW_OFFSET);
     final int offset = (int) ChronoUnit.DAYS.between(firstDay.getDate(), date);
     selectItem(offset + DUMMY_VIEW_OFFSET, false);
