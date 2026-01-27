@@ -1,0 +1,3 @@
+# .gitleaksignore - fingerprint-based ignore file for secrets scanning
+# Format: commit:file:rule:line
+# Add fingerprints from scan results to ignore specific findings

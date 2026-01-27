@@ -1,0 +1,32 @@
+# gitleaks configuration for HorizontalPicker secrets scanning
+# extends base config from scanner container at /etc/appsec/scanner/gitleaks-base.toml
+#
+# add repo-specific allowlists below to handle false positives unique to this repo.
+# for common patterns across all repos, update the base config in appsec-tooling instead.
+
+title = "HorizontalPicker secrets scan"
+
+[extend]
+path = "/etc/appsec/scanner/gitleaks-base.toml"
+
+# uncomment and add repo-specific patterns as needed:
+#
+# [[allowlists]]
+# description = "test fixtures and example code"
+# paths = [
+#   '''test/fixtures/.*''',
+#   '''examples/.*''',
+# ]
+#
+# [[allowlists]]
+# description = "exact string matches to ignore"
+# stopwords = [
+#   "EXAMPLE_API_KEY_NOT_REAL",
+# ]
+#
+# [[allowlists]]
+# description = "regex patterns to ignore"
+# regexTarget = "match"
+# regexes = [
+#   '''pk_test_[a-zA-Z0-9]+''',  # stripe test keys
+# ]
